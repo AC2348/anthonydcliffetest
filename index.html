@@ -1,286 +1,282 @@
-import React, { useState, useMemo } from 'react';
-import { AlertTriangle, Shield, Users, Clock, Calendar, CheckCircle, Info, ChevronRight, X } from 'lucide-react';
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Project Risk Register Matrix</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Lucide Icons CDN -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+        body { font-family: 'Inter', sans-serif; }
+        
+        .matrix-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            grid-template-rows: repeat(3, 1fr);
+            height: 400px;
+        }
 
-const App = () => {
-  const [selectedRisk, setSelectedRisk] = useState(null);
-  const [hoveredRisk, setHoveredRisk] = useState(null);
+        .risk-pin {
+            transition: transform 0.2s ease-in-out;
+        }
+        .risk-pin:hover {
+            transform: scale(1.2);
+        }
+        .risk-pin.active {
+            box-shadow: 0 0 0 2px #1e293b, 0 0 0 4px white;
+            z-index: 10;
+        }
 
-  const risks = [
-    {
-      id: 1,
-      challenge: "Skill Mismatch",
-      likelihood: "Medium",
-      impact: "High",
-      category: "Personnel",
-      description: "WBL students may lack research confidence.",
-      mitigation: "Week 1 Audit to assess skills immediately; ensure project proposal clearly states required skills; ensure staff availability for confidence-building.",
-      icon: <Users className="w-5 h-5" />
-    },
-    {
-      id: 2,
-      challenge: "Ethics & GDPR",
-      likelihood: "Low",
-      impact: "High",
-      category: "Compliance",
-      description: "Spontaneous 'Graffiti Wall' data collection clashes with rigid consent forms.",
-      mitigation: "Pre-approval for 'Service Evaluation' or 'Quality Assurance' (less rigid); use QR codes for digital consent at stations.",
-      icon: <Shield className="w-5 h-5" />
-    },
-    {
-      id: 3,
-      challenge: "Student Engagement",
-      likelihood: "Medium",
-      impact: "Medium",
-      category: "Fieldwork",
-      description: "The 'May Factor': Peak deadline season may lead to low response rates or hostility.",
-      mitigation: "Minimize disruption; use non-quiet zones; offer incentives; leave walls in situ to be used as a stress break.",
-      icon: <Info className="w-5 h-5" />
-    },
-    {
-      id: 4,
-      challenge: "Recruitment",
-      likelihood: "Medium",
-      impact: "Medium",
-      category: "Personnel",
-      description: "Under-recruitment (Solo student). Solo field work creates high social pressure.",
-      mitigation: "Switch to 'User Experience Audit' (solo-viable) if only one student joins; allocate extra staff support.",
-      icon: <Users className="w-5 h-5" />
-    },
-    {
-      id: 5,
-      challenge: "Bank Holidays",
-      likelihood: "High",
-      impact: "Medium",
-      category: "Timeline",
-      description: "Two Mondays off in May results in loss of momentum and 4-day supervisor weeks.",
-      mitigation: "Tuesday Morning 'Stand-ups'; set clear expectations on Fridays; rigorous kick-off meetings.",
-      icon: <Calendar className="w-5 h-5" />
-    },
-    {
-      id: 6,
-      challenge: "Length of Placement",
-      likelihood: "Medium",
-      impact: "High",
-      category: "Timeline",
-      description: "Fitting 140 hours into 5 weeks compresses research and supervision time.",
-      mitigation: "Revise plan as soon as students are allocated; adjust scope based on time-on-task.",
-      icon: <Clock className="w-5 h-5" />
-    },
-    {
-      id: 7,
-      challenge: "Data Processing",
-      likelihood: "High",
-      impact: "High",
-      category: "Fieldwork",
-      description: "Digitization bottleneck: physical sticky notes to text is time-consuming.",
-      mitigation: "Strict Friday 5 PM choke point in Week 2; no fieldwork on Fridays; staff time allocated for processing.",
-      icon: <CheckCircle className="w-5 h-5" />
-    },
-    {
-      id: 8,
-      challenge: "Staff Absence",
-      likelihood: "Medium",
-      impact: "Medium",
-      category: "Personnel",
-      description: "Delays in ethics sign-off or draft feedback due to unavailability.",
-      mitigation: "The 'Deputy' Rule; asynchronous briefing packs; weekly project updates shared with the whole team.",
-      icon: <AlertTriangle className="w-5 h-5" />
-    },
-    {
-      id: 9,
-      challenge: "Team Friction",
-      likelihood: "Low",
-      impact: "Medium",
-      category: "Stakeholders",
-      description: "Library staff or site managers may remove equipment as 'clutter'.",
-      mitigation: "Full briefing of site managers/teams in advance; secure explicit permissions for specific library zones.",
-      icon: <Info className="w-5 h-5" />
-    },
-    {
-      id: 10,
-      challenge: "Staff Engagement",
-      likelihood: "Medium",
-      impact: "High",
-      category: "Stakeholders",
-      description: "Insufficient data quality from staff roles impacts question phrasing.",
-      mitigation: "Secure buy-in from Team Leaders; explain reasoning and outcomes to teams well in advance.",
-      icon: <Users className="w-5 h-5" />
-    }
-  ];
+        /* Animation for detail card */
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(20px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+        .animate-slide-in {
+            animation: slideIn 0.3s ease-out forwards;
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-900 min-h-screen">
 
-  const levels = ["Low", "Medium", "High"];
-
-  const getRiskColor = (likelihood, impact) => {
-    const score = levels.indexOf(likelihood) + levels.indexOf(impact);
-    if (score >= 4) return "bg-red-500 border-red-600";
-    if (score >= 2) return "bg-amber-500 border-amber-600";
-    return "bg-emerald-500 border-emerald-600";
-  };
-
-  const getCellBg = (lIdx, iIdx) => {
-    const score = lIdx + iIdx;
-    if (score >= 4) return "bg-red-50";
-    if (score >= 2) return "bg-amber-50";
-    return "bg-emerald-50";
-  };
-
-  return (
-    <div className="min-h-screen bg-slate-50 p-4 md:p-8 font-sans text-slate-900">
-      <div className="max-w-6xl mx-auto">
-        <header className="mb-8">
-          <h1 className="text-3xl font-bold text-slate-800">Project Risk Register Matrix</h1>
-          <p className="text-slate-500 mt-2">Visualizing challenges for the WBL Research Project</p>
+    <div class="max-w-6xl mx-auto p-4 md:p-8">
+        <header class="mb-8">
+            <h1 class="text-3xl font-bold text-slate-800">Project Risk Register Matrix</h1>
+            <p class="text-slate-500 mt-2">Visualizing challenges for the WBL Research Project</p>
         </header>
 
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-          {/* Matrix Section */}
-          <div className="lg:col-span-7 bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
-            <div className="relative">
-              {/* Y-Axis Label */}
-              <div className="absolute -left-10 top-1/2 -rotate-90 origin-center whitespace-nowrap text-sm font-semibold uppercase tracking-wider text-slate-400">
-                Impact
-              </div>
-              
-              <div className="ml-8 mb-8">
-                <div className="grid grid-cols-3 gap-2 h-96">
-                  {levels.slice().reverse().map((impact, iIdxInv) => {
-                    const iIdx = 2 - iIdxInv;
-                    return levels.map((likelihood, lIdx) => (
-                      <div
-                        key={`${likelihood}-${impact}`}
-                        className={`relative border border-slate-200 rounded-lg flex items-center justify-center p-2 transition-colors ${getCellBg(lIdx, iIdx)}`}
-                      >
-                        {/* Cell Coordinates (Labels) */}
-                        {lIdx === 0 && (
-                          <span className="absolute -left-10 text-xs font-medium text-slate-500">{impact}</span>
-                        )}
-                        {iIdxInv === 2 && (
-                          <span className="absolute -bottom-6 text-xs font-medium text-slate-500">{likelihood}</span>
-                        )}
-
-                        {/* Risk Pins */}
-                        <div className="flex flex-wrap gap-1 justify-center items-center">
-                          {risks
-                            .filter(r => r.likelihood === likelihood && r.impact === impact)
-                            .map(risk => (
-                              <button
-                                key={risk.id}
-                                onClick={() => setSelectedRisk(risk)}
-                                onMouseEnter={() => setHoveredRisk(risk)}
-                                onMouseLeave={() => setHoveredRisk(null)}
-                                className={`w-8 h-8 rounded-full shadow-lg flex items-center justify-center text-white transition-transform hover:scale-125 focus:outline-none focus:ring-2 focus:ring-offset-2 ${getRiskColor(risk.likelihood, risk.impact)} ${selectedRisk?.id === risk.id ? 'ring-2 ring-slate-800 ring-offset-2' : ''}`}
-                              >
-                                <span className="text-xs font-bold">{risk.id}</span>
-                              </button>
-                            ))}
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+            <!-- Matrix Section -->
+            <div class="lg:col-span-7 bg-white rounded-2xl shadow-sm border border-slate-200 p-6 pt-10">
+                <div class="relative">
+                    <!-- Y-Axis Label -->
+                    <div class="absolute -left-12 top-1/2 -rotate-90 origin-center whitespace-nowrap text-sm font-semibold uppercase tracking-wider text-slate-400">
+                        Impact
+                    </div>
+                    
+                    <div class="ml-8 mb-8">
+                        <div id="matrix-container" class="matrix-grid gap-2">
+                            <!-- Matrix cells will be injected here by JS -->
                         </div>
-                      </div>
-                    ));
-                  })}
-                </div>
-              </div>
-
-              {/* X-Axis Label */}
-              <div className="text-center text-sm font-semibold uppercase tracking-wider text-slate-400 mt-10">
-                Likelihood
-              </div>
-            </div>
-
-            {/* Matrix Legend */}
-            <div className="mt-8 pt-6 border-t border-slate-100 flex gap-4 justify-center text-xs font-medium uppercase tracking-tighter text-slate-500">
-              <div className="flex items-center gap-1.5"><div className="w-3 h-3 rounded-full bg-red-500"></div> Critical</div>
-              <div className="flex items-center gap-1.5"><div className="w-3 h-3 rounded-full bg-amber-500"></div> Elevated</div>
-              <div className="flex items-center gap-1.5"><div className="w-3 h-3 rounded-full bg-emerald-500"></div> Manageable</div>
-            </div>
-          </div>
-
-          {/* Details Sidebar */}
-          <div className="lg:col-span-5 space-y-4">
-            {selectedRisk ? (
-              <div className="bg-white rounded-2xl shadow-md border-l-4 border-l-slate-800 p-6 animate-in slide-in-from-right-4">
-                <div className="flex justify-between items-start mb-4">
-                  <div className="flex items-center gap-3">
-                    <div className="p-2 bg-slate-100 rounded-lg text-slate-600">
-                      {selectedRisk.icon}
                     </div>
-                    <div>
-                      <div className="text-xs font-bold text-slate-400 uppercase tracking-widest">{selectedRisk.category}</div>
-                      <h2 className="text-xl font-bold text-slate-800">{selectedRisk.challenge}</h2>
+
+                    <!-- X-Axis Label -->
+                    <div class="text-center text-sm font-semibold uppercase tracking-wider text-slate-400 mt-10">
+                        Likelihood
                     </div>
-                  </div>
-                  <button 
-                    onClick={() => setSelectedRisk(null)}
-                    className="p-1 hover:bg-slate-100 rounded-full text-slate-400"
-                  >
-                    <X className="w-5 h-5" />
-                  </button>
                 </div>
 
-                <div className="grid grid-cols-2 gap-3 mb-6">
-                  <div className="bg-slate-50 p-3 rounded-xl border border-slate-100">
-                    <div className="text-[10px] font-bold text-slate-400 uppercase mb-1">Likelihood</div>
-                    <div className="text-sm font-semibold">{selectedRisk.likelihood}</div>
-                  </div>
-                  <div className="bg-slate-50 p-3 rounded-xl border border-slate-100">
-                    <div className="text-[10px] font-bold text-slate-400 uppercase mb-1">Impact</div>
-                    <div className="text-sm font-semibold">{selectedRisk.impact}</div>
-                  </div>
+                <!-- Matrix Legend -->
+                <div class="mt-8 pt-6 border-t border-slate-100 flex gap-4 justify-center text-xs font-medium uppercase tracking-tighter text-slate-500">
+                    <div class="flex items-center gap-1.5"><div class="w-3 h-3 rounded-full bg-red-500"></div> Critical</div>
+                    <div class="flex items-center gap-1.5"><div class="w-3 h-3 rounded-full bg-amber-500"></div> Elevated</div>
+                    <div class="flex items-center gap-1.5"><div class="w-3 h-3 rounded-full bg-emerald-500"></div> Manageable</div>
                 </div>
-
-                <div className="space-y-4">
-                  <div>
-                    <h3 className="text-sm font-bold text-slate-700 mb-1">The Challenge</h3>
-                    <p className="text-sm text-slate-600 leading-relaxed">
-                      {selectedRisk.description}
-                    </p>
-                  </div>
-                  <div className="bg-emerald-50 p-4 rounded-xl border border-emerald-100">
-                    <h3 className="text-sm font-bold text-emerald-800 mb-1 flex items-center gap-1.5">
-                      <CheckCircle className="w-4 h-4" /> Mitigation Strategy
-                    </h3>
-                    <p className="text-sm text-emerald-700 leading-relaxed italic">
-                      {selectedRisk.mitigation}
-                    </p>
-                  </div>
-                </div>
-              </div>
-            ) : (
-              <div className="bg-slate-100 rounded-2xl border-2 border-dashed border-slate-300 p-8 text-center h-full flex flex-col justify-center items-center">
-                <Info className="w-10 h-10 text-slate-300 mb-3" />
-                <p className="text-slate-500 font-medium">Select a risk marker on the matrix to view details and mitigation strategies.</p>
-              </div>
-            )}
-
-            {/* Quick List */}
-            <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
-              <div className="p-4 border-b border-slate-100 bg-slate-50/50">
-                <h3 className="font-bold text-slate-700 text-sm">Full Risk Inventory</h3>
-              </div>
-              <div className="max-h-[300px] overflow-y-auto">
-                {risks.map((risk) => (
-                  <button
-                    key={risk.id}
-                    onClick={() => setSelectedRisk(risk)}
-                    className={`w-full text-left p-3 flex items-center gap-3 border-b border-slate-50 hover:bg-slate-50 transition-colors ${selectedRisk?.id === risk.id ? 'bg-slate-50' : ''}`}
-                  >
-                    <span className={`flex-shrink-0 w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold text-white ${getRiskColor(risk.likelihood, risk.impact)}`}>
-                      {risk.id}
-                    </span>
-                    <span className="text-sm font-medium text-slate-700 flex-grow truncate">{risk.challenge}</span>
-                    <ChevronRight className="w-4 h-4 text-slate-300" />
-                  </button>
-                ))}
-              </div>
             </div>
-          </div>
+
+            <!-- Details Sidebar -->
+            <div class="lg:col-span-5 space-y-4">
+                <div id="detail-panel">
+                    <!-- Default state -->
+                    <div class="bg-slate-100 rounded-2xl border-2 border-dashed border-slate-300 p-8 text-center h-64 flex flex-col justify-center items-center">
+                        <i data-lucide="info" class="w-10 h-10 text-slate-300 mb-3"></i>
+                        <p class="text-slate-500 font-medium">Select a risk marker on the matrix to view details and mitigation strategies.</p>
+                    </div>
+                </div>
+
+                <!-- Quick List -->
+                <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+                    <div class="p-4 border-b border-slate-100 bg-slate-50/50">
+                        <h3 class="font-bold text-slate-700 text-sm">Full Risk Inventory</h3>
+                    </div>
+                    <div id="risk-list" class="max-h-[300px] overflow-y-auto">
+                        <!-- List items injected here -->
+                    </div>
+                </div>
+            </div>
         </div>
 
-        <footer className="mt-8 text-center text-slate-400 text-xs">
-          WBL Project Risk Management Dashboard • Built for Project Success
+        <footer class="mt-8 text-center text-slate-400 text-xs">
+            WBL Project Risk Management Dashboard • Vanilla JS Version
         </footer>
-      </div>
     </div>
-  );
-};
+
+    <script>
+        const risks = [
+            { id: 1, challenge: "Skill Mismatch", likelihood: "Medium", impact: "High", category: "Personnel", description: "WBL students may lack research confidence.", mitigation: "Week 1 Audit to assess skills immediately; ensure project proposal clearly states required skills; ensure staff availability for confidence-building.", icon: "users" },
+            { id: 2, challenge: "Ethics & GDPR", likelihood: "Low", impact: "High", category: "Compliance", description: "Spontaneous 'Graffiti Wall' data collection clashes with rigid consent forms.", mitigation: "Pre-approval for 'Service Evaluation' or 'Quality Assurance' (less rigid); use QR codes for digital consent at stations.", icon: "shield" },
+            { id: 3, challenge: "Student Engagement", likelihood: "Medium", impact: "Medium", category: "Fieldwork", description: "The 'May Factor': Peak deadline season may lead to low response rates or hostility.", mitigation: "Minimize disruption; use non-quiet zones; offer incentives; leave walls in situ to be used as a stress break.", icon: "info" },
+            { id: 4, challenge: "Recruitment", likelihood: "Medium", impact: "Medium", category: "Personnel", description: "Under-recruitment (Solo student). Solo field work creates high social pressure.", mitigation: "Switch to 'User Experience Audit' (solo-viable) if only one student joins; allocate extra staff support.", icon: "users" },
+            { id: 5, challenge: "Bank Holidays", likelihood: "High", impact: "Medium", category: "Timeline", description: "Two Mondays off in May results in loss of momentum and 4-day supervisor weeks.", mitigation: "Tuesday Morning 'Stand-ups'; set clear expectations on Fridays; rigorous kick-off meetings.", icon: "calendar" },
+            { id: 6, challenge: "Length of Placement", likelihood: "Medium", impact: "High", category: "Timeline", description: "Fitting 140 hours into 5 weeks compresses research and supervision time.", mitigation: "Revise plan as soon as students are allocated; adjust scope based on time-on-task.", icon: "clock" },
+            { id: 7, challenge: "Data Processing", likelihood: "High", impact: "High", category: "Fieldwork", description: "Digitization bottleneck: physical sticky notes to text is time-consuming.", mitigation: "Strict Friday 5 PM choke point in Week 2; no fieldwork on Fridays; staff time allocated for processing.", icon: "check-circle" },
+            { id: 8, challenge: "Staff Absence", likelihood: "Medium", impact: "Medium", category: "Personnel", description: "Delays in ethics sign-off or draft feedback due to unavailability.", mitigation: "The 'Deputy' Rule; asynchronous briefing packs; weekly project updates shared with the whole team.", icon: "alert-triangle" },
+            { id: 9, challenge: "Team Friction", likelihood: "Low", impact: "Medium", category: "Stakeholders", description: "Library staff or site managers may remove equipment as 'clutter'.", mitigation: "Full briefing of site managers/teams in advance; secure explicit permissions for specific library zones.", icon: "info" },
+            { id: 10, challenge: "Staff Engagement", likelihood: "Medium", impact: "High", category: "Stakeholders", description: "Insufficient data quality from staff roles impacts question phrasing.", mitigation: "Secure buy-in from Team Leaders; explain reasoning and outcomes to teams well in advance.", icon: "users" }
+        ];
+
+        const levels = ["Low", "Medium", "High"];
+        let currentSelectedId = null;
+
+        function getRiskColorClass(likelihood, impact) {
+            const score = levels.indexOf(likelihood) + levels.indexOf(impact);
+            if (score >= 4) return "bg-red-500 border-red-600";
+            if (score >= 2) return "bg-amber-500 border-amber-600";
+            return "bg-emerald-500 border-emerald-600";
+        }
+
+        function getCellBgClass(lIdx, iIdx) {
+            const score = lIdx + iIdx;
+            if (score >= 4) return "bg-red-50";
+            if (score >= 2) return "bg-amber-50";
+            return "bg-emerald-50";
+        }
+
+        function renderMatrix() {
+            const container = document.getElementById('matrix-container');
+            container.innerHTML = '';
+
+            // Render Rows (Impact: High to Low)
+            for (let i = 2; i >= 0; i--) {
+                const impactLabel = levels[i];
+                // Render Columns (Likelihood: Low to High)
+                for (let l = 0; l < 3; l++) {
+                    const likelihoodLabel = levels[l];
+                    const cell = document.createElement('div');
+                    cell.className = `relative border border-slate-200 rounded-lg flex items-center justify-center p-2 transition-colors ${getCellBgClass(l, i)}`;
+                    
+                    // Add Axis helper labels
+                    if (l === 0) {
+                        const label = document.createElement('span');
+                        label.className = "absolute -left-12 text-xs font-medium text-slate-500";
+                        label.innerText = impactLabel;
+                        cell.appendChild(label);
+                    }
+                    if (i === 0) {
+                        const label = document.createElement('span');
+                        label.className = "absolute -bottom-6 w-full text-center text-xs font-medium text-slate-500";
+                        label.innerText = likelihoodLabel;
+                        cell.appendChild(label);
+                    }
+
+                    // Add Pins for this cell
+                    const pinsContainer = document.createElement('div');
+                    pinsContainer.className = "flex flex-wrap gap-1 justify-center items-center";
+                    
+                    const cellRisks = risks.filter(r => r.likelihood === likelihoodLabel && r.impact === impactLabel);
+                    cellRisks.forEach(risk => {
+                        const btn = document.createElement('button');
+                        btn.className = `risk-pin w-8 h-8 rounded-full shadow-lg flex items-center justify-center text-white text-xs font-bold focus:outline-none ${getRiskColorClass(risk.likelihood, risk.impact)} ${currentSelectedId === risk.id ? 'active' : ''}`;
+                        btn.innerText = risk.id;
+                        btn.onclick = () => selectRisk(risk.id);
+                        pinsContainer.appendChild(btn);
+                    });
+
+                    cell.appendChild(pinsContainer);
+                    container.appendChild(cell);
+                }
+            }
+        }
+
+        function renderList() {
+            const list = document.getElementById('risk-list');
+            list.innerHTML = '';
+            risks.forEach(risk => {
+                const item = document.createElement('button');
+                item.className = `w-full text-left p-3 flex items-center gap-3 border-b border-slate-50 hover:bg-slate-50 transition-colors ${currentSelectedId === risk.id ? 'bg-slate-50' : ''}`;
+                item.onclick = () => selectRisk(risk.id);
+                
+                item.innerHTML = `
+                    <span class="flex-shrink-0 w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold text-white ${getRiskColorClass(risk.likelihood, risk.impact)}">
+                        ${risk.id}
+                    </span>
+                    <span class="text-sm font-medium text-slate-700 flex-grow truncate">${risk.challenge}</span>
+                    <i data-lucide="chevron-right" class="w-4 h-4 text-slate-300"></i>
+                `;
+                list.appendChild(item);
+            });
+            lucide.createIcons();
+        }
+
+        function selectRisk(id) {
+            currentSelectedId = id;
+            const risk = risks.find(r => r.id === id);
+            const panel = document.getElementById('detail-panel');
+
+            if (!risk) return;
+
+            panel.innerHTML = `
+                <div class="bg-white rounded-2xl shadow-md border-l-4 border-l-slate-800 p-6 animate-slide-in">
+                    <div class="flex justify-between items-start mb-4">
+                        <div class="flex items-center gap-3">
+                            <div class="p-2 bg-slate-100 rounded-lg text-slate-600">
+                                <i data-lucide="${risk.icon}" class="w-5 h-5"></i>
+                            </div>
+                            <div>
+                                <div class="text-xs font-bold text-slate-400 uppercase tracking-widest">${risk.category}</div>
+                                <h2 class="text-xl font-bold text-slate-800">${risk.challenge}</h2>
+                            </div>
+                        </div>
+                        <button onclick="deselectRisk()" class="p-1 hover:bg-slate-100 rounded-full text-slate-400">
+                            <i data-lucide="x" class="w-5 h-5"></i>
+                        </button>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-3 mb-6">
+                        <div class="bg-slate-50 p-3 rounded-xl border border-slate-100">
+                            <div class="text-[10px] font-bold text-slate-400 uppercase mb-1">Likelihood</div>
+                            <div class="text-sm font-semibold">${risk.likelihood}</div>
+                        </div>
+                        <div class="bg-slate-50 p-3 rounded-xl border border-slate-100">
+                            <div class="text-[10px] font-bold text-slate-400 uppercase mb-1">Impact</div>
+                            <div class="text-sm font-semibold">${risk.impact}</div>
+                        </div>
+                    </div>
+
+                    <div class="space-y-4">
+                        <div>
+                            <h3 class="text-sm font-bold text-slate-700 mb-1">The Challenge</h3>
+                            <p class="text-sm text-slate-600 leading-relaxed">${risk.description}</p>
+                        </div>
+                        <div class="bg-emerald-50 p-4 rounded-xl border border-emerald-100">
+                            <h3 class="text-sm font-bold text-emerald-800 mb-1 flex items-center gap-1.5">
+                                <i data-lucide="check-circle" class="w-4 h-4"></i> Mitigation Strategy
+                            </h3>
+                            <p class="text-sm text-emerald-700 leading-relaxed italic">${risk.mitigation}</p>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            lucide.createIcons();
+            renderMatrix(); // Refresh matrix to update active pin state
+            renderList();   // Refresh list to update active state
+        }
+
+        function deselectRisk() {
+            currentSelectedId = null;
+            document.getElementById('detail-panel').innerHTML = `
+                <div class="bg-slate-100 rounded-2xl border-2 border-dashed border-slate-300 p-8 text-center h-64 flex flex-col justify-center items-center">
+                    <i data-lucide="info" class="w-10 h-10 text-slate-300 mb-3"></i>
+                    <p class="text-slate-500 font-medium">Select a risk marker on the matrix to view details and mitigation strategies.</p>
+                </div>
+            `;
+            lucide.createIcons();
+            renderMatrix();
+            renderList();
+        }
+
+        // Initialize App
+        window.onload = () => {
+            renderMatrix();
+            renderList();
+            lucide.createIcons();
+        };
+    </script>
+</body>
+</html>
 
 
