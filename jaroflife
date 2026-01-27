@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jar of Life - Weekly Student Planner</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Lucide Icons CDN -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Outfit', sans-serif;
+            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+            min-height: 100vh;
+        }
+        .jar-container {
+            position: relative;
+            width: 280px;
+            height: 420px;
+            border: 6px solid #e2e8f0;
+            border-bottom-left-radius: 80px;
+            border-bottom-right-radius: 80px;
+            border-top: none;
+            background: rgba(255, 255, 255, 0.6);
+            backdrop-filter: blur(8px);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column-reverse;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.05), inset 0 -10px 20px rgba(0,0,0,0.02);
+        }
+        .jar-container::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 15%;
+            width: 70%;
+            height: 12px;
+            background: #cbd5e1;
+            border-radius: 0 0 10px 10px;
+            z-index: 10;
+        }
+        .rock-item {
+            background: #334155;
+            border: 2px solid #0f172a;
+            border-radius: 24px;
+            margin: 4px 8px;
+            transition: all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-align: center;
+            padding: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.15);
+            animation: rockDrop 0.6s ease-out;
+            z-index: 5;
+        }
+        .sand-item {
+            background: #f59e0b;
+            height: 8px;
+            width: 100%;
+            margin-top: 1px;
+            animation: sandFill 0.4s ease-out;
+            opacity: 0.9;
+        }
+        @keyframes rockDrop {
+            0% { transform: translateY(-450px) rotate(45deg); opacity: 0; }
+            70% { transform: translateY(10px); }
+            100% { transform: translateY(0) rotate(0); opacity: 1; }
+        }
+        @keyframes sandFill {
+            0% { transform: scaleX(0); opacity: 0; }
+            100% { transform: scaleX(1); opacity: 0.9; }
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 5px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body class="p-4 sm:p-6 lg:p-10">
+    <div class="max-w-6xl mx-auto">
+        <!-- Header -->
+        <header class="text-center mb-10">
+            <h1 class="text-5xl font-bold text-slate-900 tracking-tight mb-3">The Jar of Life</h1>
+            <p class="text-slate-500 text-lg max-w-xl mx-auto italic">Visualizing your priorities for a balanced week.</p>
+        </header>
+
+        <!-- Philosophy & Context -->
+        <section class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12">
+            <div class="bg-white p-8 rounded-3xl shadow-sm border border-slate-100">
+                <div class="flex items-center gap-3 mb-4">
+                    <i data-lucide="info" class="text-indigo-500"></i>
+                    <h2 class="text-xl font-bold text-slate-800">The Core Concept</h2>
+                </div>
+                <p class="text-slate-600 leading-relaxed mb-4">
+                    Time is your most precious resource. This jar represents your <strong>weekly capacity</strong>. If you fill it with "Sand" (minor distractions) first, you'll never find space for the "Rocks" (your biggest goals).
+                </p>
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="p-4 bg-slate-50 rounded-2xl border border-slate-100">
+                        <span class="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">Rocks</span>
+                        <p class="text-sm font-semibold text-slate-800">Big goals, study, and growth.</p>
+                    </div>
+                    <div class="p-4 bg-amber-50 rounded-2xl border border-amber-100">
+                        <span class="block text-xs font-bold text-amber-500 uppercase tracking-widest mb-1">Sand</span>
+                        <p class="text-sm font-semibold text-amber-800">Small tasks and entertainment.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-indigo-600 p-8 rounded-3xl shadow-lg text-white">
+                <h2 class="text-xl font-bold mb-4 flex items-center gap-2">
+                    <i data-lucide="map"></i> Quick Start Guide
+                </h2>
+                <ul class="space-y-4 opacity-90 text-sm">
+                    <li class="flex gap-3 items-start">
+                        <span class="bg-indigo-500 text-white w-6 h-6 flex items-center justify-center rounded-full text-xs font-bold shrink-0 mt-0.5">1</span>
+                        <span>Start your week by adding <strong>Rocks</strong>—these are the things you <em>must</em> get done.</span>
+                    </li>
+                    <li class="flex gap-3 items-start">
+                        <span class="bg-indigo-500 text-white w-6 h-6 flex items-center justify-center rounded-full text-xs font-bold shrink-0 mt-0.5">2</span>
+                        <span>Add <strong>Sand</strong> to fill the remaining time gaps.</span>
+                    </li>
+                    <li class="flex gap-3 items-start">
+                        <span class="bg-indigo-500 text-white w-6 h-6 flex items-center justify-center rounded-full text-xs font-bold shrink-0 mt-0.5">3</span>
+                        <span>Watch out! If the jar reaches 100%, you are over-committed.</span>
+                    </li>
+                    <li class="flex gap-3 items-start">
+                        <span class="bg-indigo-500 text-white w-6 h-6 flex items-center justify-center rounded-full text-xs font-bold shrink-0 mt-0.5">4</span>
+                        <span>Ask the <strong>AI Advisor</strong> to critique your balance.</span>
+                    </li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- Main Interaction Area -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+            
+            <!-- Column 1: Add Tasks (4/12) -->
+            <div class="lg:col-span-4 space-y-6">
+                <div class="bg-white p-6 rounded-3xl shadow-xl border border-slate-100">
+                    <h3 class="text-lg font-bold text-slate-800 mb-4">Select Priority Rocks</h3>
+                    <div class="grid grid-cols-2 gap-2 mb-6">
+                        <button onclick="addTask('Study Session', 'rock')" class="flex flex-col items-center p-3 rounded-2xl bg-slate-50 border border-slate-100 hover:bg-slate-100 transition text-center group">
+                            <i data-lucide="book-open" class="w-5 h-5 mb-2 text-slate-400 group-hover:text-slate-600"></i>
+                            <span class="text-[10px] font-bold uppercase tracking-tight text-slate-500">Study</span>
+                        </button>
+                        <button onclick="addTask('Exercise', 'rock')" class="flex flex-col items-center p-3 rounded-2xl bg-slate-50 border border-slate-100 hover:bg-slate-100 transition text-center group">
+                            <i data-lucide="dumbbell" class="w-5 h-5 mb-2 text-slate-400 group-hover:text-slate-600"></i>
+                            <span class="text-[10px] font-bold uppercase tracking-tight text-slate-500">Exercise</span>
+                        </button>
+                        <button onclick="addTask('Project Work', 'rock')" class="flex flex-col items-center p-3 rounded-2xl bg-slate-50 border border-slate-100 hover:bg-slate-100 transition text-center group">
+                            <i data-lucide="rocket" class="w-5 h-5 mb-2 text-slate-400 group-hover:text-slate-600"></i>
+                            <span class="text-[10px] font-bold uppercase tracking-tight text-slate-500">Project</span>
+                        </button>
+                        <button onclick="addTask('Self Care', 'rock')" class="flex flex-col items-center p-3 rounded-2xl bg-slate-50 border border-slate-100 hover:bg-slate-100 transition text-center group">
+                            <i data-lucide="heart" class="w-5 h-5 mb-2 text-slate-400 group-hover:text-slate-600"></i>
+                            <span class="text-[10px] font-bold uppercase tracking-tight text-slate-500">Health</span>
+                        </button>
+                    </div>
+
+                    <h3 class="text-lg font-bold text-slate-800 mb-4">Add Weekly Sand</h3>
+                    <div class="grid grid-cols-2 gap-2 mb-6">
+                        <button onclick="addTask('Social Media', 'sand')" class="flex flex-col items-center p-3 rounded-2xl bg-amber-50 border border-amber-100 hover:bg-amber-100 transition text-center group">
+                            <i data-lucide="smartphone" class="w-5 h-5 mb-2 text-amber-400 group-hover:text-amber-600"></i>
+                            <span class="text-[10px] font-bold uppercase tracking-tight text-amber-500">Socials</span>
+                        </button>
+                        <button onclick="addTask('Gaming', 'sand')" class="flex flex-col items-center p-3 rounded-2xl bg-amber-50 border border-amber-100 hover:bg-amber-100 transition text-center group">
+                            <i data-lucide="gamepad-2" class="w-5 h-5 mb-2 text-amber-400 group-hover:text-amber-600"></i>
+                            <span class="text-[10px] font-bold uppercase tracking-tight text-amber-500">Gaming</span>
+                        </button>
+                    </div>
+
+                    <div class="border-t border-slate-100 pt-6">
+                        <p class="text-xs font-bold text-slate-400 uppercase mb-3">Custom Activity</p>
+                        <input type="text" id="customTaskName" placeholder="Enter task name..." class="w-full p-4 bg-slate-50 border border-slate-200 rounded-2xl mb-3 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 text-sm">
+                        <div class="grid grid-cols-2 gap-2">
+                            <button onclick="addCustomTask('rock')" class="py-3 bg-slate-800 text-white rounded-xl text-xs font-bold hover:bg-slate-900 transition">Make Rock</button>
+                            <button onclick="addCustomTask('sand')" class="py-3 bg-amber-400 text-white rounded-xl text-xs font-bold hover:bg-amber-500 transition">Make Sand</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Column 2: The Jar Visual (4/12) -->
+            <div class="lg:col-span-4 flex flex-col items-center">
+                <div id="jar" class="jar-container">
+                    <!-- Tasks will render here -->
+                </div>
+                
+                <div class="mt-8 w-full max-w-[280px]">
+                    <div class="flex justify-between items-end mb-2">
+                        <span class="text-xs font-bold text-slate-400 uppercase tracking-widest">Week Capacity</span>
+                        <span id="capacityText" class="text-xl font-bold text-slate-700">0%</span>
+                    </div>
+                    <div class="w-full bg-slate-200 h-4 rounded-full overflow-hidden shadow-inner">
+                        <div id="capacityBar" class="h-full bg-indigo-500 transition-all duration-500" style="width: 0%"></div>
+                    </div>
+                    <button onclick="resetJar()" class="w-full mt-6 flex items-center justify-center gap-2 text-slate-400 hover:text-rose-500 transition font-bold text-xs uppercase tracking-widest">
+                        <i data-lucide="refresh-cw" class="w-4 h-4"></i> Reset Jar
+                    </button>
+                </div>
+            </div>
+
+            <!-- Column 3: Insights & List (4/12) -->
+            <div class="lg:col-span-4 space-y-6">
+                <div class="bg-white p-6 rounded-3xl shadow-xl border border-slate-100">
+                    <div class="flex items-center gap-2 mb-4">
+                        <i data-lucide="sparkles" class="text-indigo-500 w-5 h-5"></i>
+                        <h3 class="text-lg font-bold text-slate-800">AI Advisor</h3>
+                    </div>
+                    <div id="adviceContent" class="text-slate-600 text-sm leading-relaxed min-h-[100px] flex flex-col justify-center italic bg-slate-50 p-4 rounded-2xl border border-dashed border-slate-200">
+                        Add tasks to your week to receive an analysis of your focus.
+                    </div>
+                    <button id="analyzeBtn" onclick="analyzeTasks()" class="w-full mt-4 py-4 bg-indigo-600 text-white rounded-2xl font-bold shadow-lg shadow-indigo-100 hover:bg-indigo-700 transition disabled:opacity-50 disabled:cursor-not-allowed">
+                        Analyze My Balance
+                    </button>
+                </div>
+
+                <div class="bg-white p-6 rounded-3xl shadow-xl border border-slate-100">
+                    <h3 class="text-lg font-bold text-slate-800 mb-4">Plan Summary</h3>
+                    <div id="taskList" class="space-y-2 max-h-[250px] overflow-y-auto custom-scrollbar pr-1">
+                        <div class="text-center py-6 text-slate-300">
+                            <i data-lucide="clipboard-list" class="w-8 h-8 mx-auto mb-2 opacity-20"></i>
+                            <p class="text-xs font-medium italic">Your list is empty.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="fixed bottom-10 left-1/2 -translate-x-1/2 bg-slate-900 text-white px-8 py-4 rounded-3xl shadow-2xl opacity-0 pointer-events-none transition-all duration-300 z-50 flex items-center gap-3">
+        <i data-lucide="alert-circle" class="text-rose-400"></i>
+        <span id="toastMsg" class="font-bold text-sm"></span>
+    </div>
+
+    <script>
+        const apiKey = ""; // Set by environment
+        let tasks = [];
+        const MAX_CAPACITY = 100;
+        const ROCK_WEIGHT = 18; // Bigger blocks
+        const SAND_WEIGHT = 4;  // Fills gaps
+
+        // Initialize Lucide Icons
+        lucide.createIcons();
+
+        function addTask(name, type) {
+            const currentWeight = calculateTotalWeight();
+            const weightNeeded = type === 'rock' ? ROCK_WEIGHT : SAND_WEIGHT;
+
+            if (currentWeight + weightNeeded > MAX_CAPACITY) {
+                showToast("The jar is full! You need to remove something before adding more.");
+                return;
+            }
+
+            const task = {
+                id: Date.now() + Math.random(),
+                name: name,
+                type: type,
+                weight: weightNeeded
+            };
+
+            tasks.push(task);
+            updateUI();
+        }
+
+        function addCustomTask(type) {
+            const input = document.getElementById('customTaskName');
+            const name = input.value.trim();
+            if (!name) return;
+            addTask(name, type);
+            input.value = '';
+        }
+
+        function removeTask(id) {
+            tasks = tasks.filter(t => t.id !== id);
+            updateUI();
+        }
+
+        function calculateTotalWeight() {
+            return tasks.reduce((sum, task) => sum + task.weight, 0);
+        }
+
+        function updateUI() {
+            renderJar();
+            renderList();
+            updateCapacityDisplay();
+            lucide.createIcons(); // Re-render icons in new elements
+        }
+
+        function updateCapacityDisplay() {
+            const weight = calculateTotalWeight();
+            const percent = Math.min(100, Math.round((weight / MAX_CAPACITY) * 100));
+            
+            const bar = document.getElementById('capacityBar');
+            const text = document.getElementById('capacityText');
+            const analyzeBtn = document.getElementById('analyzeBtn');
+
+            text.innerText = percent + '%';
+            bar.style.width = percent + '%';
+            
+            // Color shifts based on load
+            if (percent > 90) {
+                bar.className = 'h-full bg-rose-500 transition-all duration-500';
+            } else if (percent > 70) {
+                bar.className = 'h-full bg-amber-400 transition-all duration-500';
+            } else {
+                bar.className = 'h-full bg-indigo-500 transition-all duration-500';
+            }
+
+            analyzeBtn.disabled = tasks.length === 0;
+        }
+
+        function renderJar() {
+            const jar = document.getElementById('jar');
+            jar.innerHTML = '';
+            
+            tasks.forEach(task => {
+                const el = document.createElement('div');
+                if (task.type === 'rock') {
+                    el.className = 'rock-item';
+                    el.style.height = (task.weight * 3.5) + 'px';
+                    el.innerText = task.name;
+                } else {
+                    el.className = 'sand-item';
+                    el.style.height = (task.weight * 1.5) + 'px';
+                }
+                jar.appendChild(el);
+            });
+        }
+
+        function renderList() {
+            const list = document.getElementById('taskList');
+            if (tasks.length === 0) {
+                list.innerHTML = `
+                    <div class="text-center py-6 text-slate-300">
+                        <i data-lucide="clipboard-list" class="w-8 h-8 mx-auto mb-2 opacity-20"></i>
+                        <p class="text-xs font-medium italic">Your list is empty.</p>
+                    </div>`;
+                return;
+            }
+
+            list.innerHTML = tasks.map(task => `
+                <div class="flex items-center justify-between p-3 rounded-2xl ${task.type === 'rock' ? 'bg-slate-50 border-slate-200' : 'bg-amber-50 border-amber-100'} border group transition hover:shadow-sm">
+                    <div class="flex items-center gap-3">
+                        <div class="w-2 h-2 rounded-full ${task.type === 'rock' ? 'bg-slate-800' : 'bg-amber-400'}"></div>
+                        <span class="text-sm font-bold text-slate-700">${task.name}</span>
+                    </div>
+                    <button onclick="removeTask(${task.id})" class="text-slate-300 hover:text-rose-500 transition">
+                        <i data-lucide="trash-2" class="w-4 h-4"></i>
+                    </button>
+                </div>
+            `).join('');
+        }
+
+        function resetJar() {
+            tasks = [];
+            document.getElementById('adviceContent').innerHTML = '<p>Add tasks to your week to receive an analysis of your focus.</p>';
+            updateUI();
+        }
+
+        function showToast(msg) {
+            const toast = document.getElementById('toast');
+            const toastMsg = document.getElementById('toastMsg');
+            toastMsg.innerText = msg;
+            toast.style.opacity = '1';
+            toast.style.transform = 'translate(-50%, -20px)';
+            setTimeout(() => { 
+                toast.style.opacity = '0'; 
+                toast.style.transform = 'translate(-50%, 0)';
+            }, 3000);
+        }
+
+        async function analyzeTasks() {
+            const adviceDiv = document.getElementById('adviceContent');
+            const analyzeBtn = document.getElementById('analyzeBtn');
+            
+            analyzeBtn.disabled = true;
+            analyzeBtn.innerHTML = `
+                <div class="flex items-center justify-center gap-2">
+                    <svg class="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                    Analyzing...
+                </div>`;
+
+            const rocks = tasks.filter(t => t.type === 'rock').map(t => t.name).join(', ');
+            const sand = tasks.filter(t => t.type === 'sand').map(t => t.name).join(', ');
+            
+            const prompt = `Student schedule check using the 'Jar of Life' metaphor:
+            Rocks (Highest Priorities): ${rocks || 'None listed'}
+            Sand (Lower Priorities): ${sand || 'None listed'}
+            
+            Analyze if this schedule is balanced. If there is mostly sand, warn them that the rocks won't fit if they don't prioritize. If there are too many rocks, warn them of burnout.
+            Give exactly 3 bullet points of advice. Keep the tone encouraging, concise, and academic-focused. Max 140 words.`;
+
+            try {
+                const response = await callGemini(prompt);
+                adviceDiv.innerHTML = formatAdvice(response);
+            } catch (error) {
+                adviceDiv.innerHTML = '<p class="text-rose-500 font-bold">Error connecting to the advisor. Please try again.</p>';
+            } finally {
+                analyzeBtn.disabled = false;
+                analyzeBtn.innerText = "Analyze My Balance";
+            }
+        }
+
+        async function callGemini(prompt, retryCount = 0) {
+            const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
+            
+            const payload = {
+                contents: [{ parts: [{ text: prompt }] }],
+                systemInstruction: { parts: [{ text: "You are a professional student academic coach. You help students balance high-priority studies (Rocks) with low-priority relaxation (Sand) using the Jar of Life philosophy." }] }
+            };
+
+            try {
+                const response = await fetch(url, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                if (!response.ok) throw new Error('API Error');
+                const data = await response.json();
+                return data.candidates?.[0]?.content?.parts?.[0]?.text || "No advice available at this time.";
+            } catch (error) {
+                if (retryCount < 5) {
+                    const delay = Math.pow(2, retryCount) * 1000;
+                    await new Promise(r => setTimeout(r, delay));
+                    return callGemini(prompt, retryCount + 1);
+                }
+                throw error;
+            }
+        }
+
+        function formatAdvice(text) {
+            return text
+                .replace(/\*\*(.*?)\*\*/g, '<strong class="text-slate-800">$1</strong>')
+                .replace(/^\* (.*?)$/gm, '<li class="mb-2">$1</li>')
+                .replace(/\n/g, '<br>');
+        }
+    </script>
+</body>
+</html>
