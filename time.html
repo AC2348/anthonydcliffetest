@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Daily Time Bank</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Lucide Icons CDN -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+        body { font-family: 'Plus Jakarta Sans', sans-serif; }
+        
+        /* Custom scrollbar for transaction list */
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #e2e8f0; border-radius: 10px; }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-900 min-h-screen p-4 md:p-8">
+
+    <div class="max-w-4xl mx-auto">
+        <!-- Header Section -->
+        <header class="mb-8 text-center md:text-left flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div>
+                <h1 class="text-3xl font-extrabold text-slate-800 flex items-center justify-center md:justify-start gap-2">
+                    <i data-lucide="wallet" class="text-indigo-600"></i>
+                    The Daily Time Bank
+                </h1>
+                <p class="text-slate-500 mt-1 font-medium">Every day starts with a 24-hour deposit. How will you spend yours?</p>
+            </div>
+            
+            <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-200 flex items-center gap-4">
+                <div id="balance-icon-container" class="p-3 rounded-xl bg-green-100 text-green-600 transition-colors duration-300">
+                    <i data-lucide="trending-down"></i>
+                </div>
+                <div class="text-left">
+                    <p class="text-[10px] font-bold uppercase tracking-widest text-slate-400">Current Balance</p>
+                    <p id="main-balance" class="text-2xl font-black text-slate-800 transition-colors duration-300">
+                        24.0 <span class="text-sm font-medium">Hours</span>
+                    </p>
+                </div>
+            </div>
+        </header>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <!-- Sidebar: Input and Analysis -->
+            <div class="lg:col-span-1 space-y-6">
+                
+                <!-- Input Form -->
+                <div class="bg-white p-6 rounded-3xl shadow-sm border border-slate-100">
+                    <h2 class="text-lg font-bold mb-4 flex items-center gap-2">
+                        <i data-lucide="plus-circle" class="text-indigo-500 w-5 h-5"></i>
+                        New Transaction
+                    </h2>
+                    <form id="transaction-form" class="space-y-4">
+                        <div>
+                            <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">Activity Description</label>
+                            <input 
+                                type="text" 
+                                id="activity-name"
+                                required
+                                placeholder="e.g. Writing History Essay"
+                                class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none transition-all placeholder:text-slate-300"
+                            />
+                        </div>
+                        
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">Hours</label>
+                                <input 
+                                    type="number" 
+                                    id="activity-hours"
+                                    required
+                                    step="0.5"
+                                    min="0.1"
+                                    placeholder="2.0"
+                                    class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none transition-all"
+                                />
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">Category</label>
+                                <select 
+                                    id="activity-category"
+                                    class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none transition-all appearance-none cursor-pointer"
+                                >
+                                    <!-- Populated by JS -->
+                                </select>
+                            </div>
+                        </div>
+
+                        <button 
+                            type="submit"
+                            class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 rounded-xl shadow-lg shadow-indigo-100 transition-all transform active:scale-[0.98]"
+                        >
+                            Confirm Withdrawal
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Overdraw Alert (Hidden by default) -->
+                <div id="overdraw-alert" class="hidden bg-red-50 border border-red-100 p-4 rounded-2xl flex items-start gap-3 animate-pulse">
+                    <i data-lucide="alert-circle" class="text-red-500 shrink-0 mt-0.5"></i>
+                    <div>
+                        <p class="text-red-800 font-bold text-sm">Account Overdrawn!</p>
+                        <p id="overdraw-text" class="text-red-600 text-xs">You are spending hours you don't have.</p>
+                    </div>
+                </div>
+
+                <!-- Portfolio Analysis -->
+                <div class="bg-white p-6 rounded-3xl shadow-sm border border-slate-100">
+                    <h2 class="text-lg font-bold mb-4">Portfolio Analysis</h2>
+                    <div id="portfolio-list" class="space-y-4">
+                        <!-- Populated by JS -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Main Content: History -->
+            <div class="lg:col-span-2">
+                <div class="bg-white rounded-3xl shadow-sm border border-slate-100 overflow-hidden flex flex-col h-full">
+                    <div class="p-6 border-b border-slate-100 flex justify-between items-center bg-white z-10">
+                        <h2 class="text-xl font-bold text-slate-800 uppercase tracking-tight">Recent Activity</h2>
+                        <span id="entry-count" class="text-[10px] bg-slate-100 text-slate-500 px-3 py-1 rounded-full font-black tracking-widest">
+                            0 ENTRIES
+                        </span>
+                    </div>
+                    
+                    <div id="transaction-history" class="divide-y divide-slate-50 overflow-y-auto max-h-[500px] custom-scrollbar">
+                        <!-- Populated by JS -->
+                    </div>
+                    
+                    <!-- Progress Visualizer Footer -->
+                    <div class="p-6 bg-slate-50 border-t border-slate-100 mt-auto">
+                        <p class="text-[10px] font-black text-slate-400 uppercase mb-3 tracking-[0.2em]">Day Capacity Utilization</p>
+                        <div id="progress-bar-container" class="flex h-5 w-full bg-slate-200 rounded-full overflow-hidden shadow-inner border border-slate-300 border-opacity-20">
+                            <!-- Populated by JS with segments -->
+                        </div>
+                        <div class="flex justify-between mt-2 px-1">
+                            <span class="text-[9px] font-black text-slate-400 tracking-tighter uppercase">0h (Start)</span>
+                            <span class="text-[9px] font-black text-slate-400 tracking-tighter uppercase">12h (Mid)</span>
+                            <span class="text-[9px] font-black text-slate-400 tracking-tighter uppercase">24h (Limit)</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Configuration
+        const CATEGORIES = {
+            education: { label: 'Education', icon: 'book-open', color: 'bg-blue-500', text: 'text-blue-600' },
+            rest: { label: 'Rest & Sleep', icon: 'moon', color: 'bg-indigo-500', text: 'text-indigo-600' },
+            leisure: { label: 'Leisure & Fun', icon: 'gamepad-2', color: 'bg-pink-500', text: 'text-pink-600' },
+            maintenance: { label: 'Maintenance', icon: 'coffee', color: 'bg-orange-500', text: 'text-orange-600' },
+            work: { label: 'Work/Chores', icon: 'briefcase', color: 'bg-emerald-500', text: 'text-emerald-600' },
+            other: { label: 'Other', icon: 'clock', color: 'bg-slate-500', text: 'text-slate-600' }
+        };
+
+        // State
+        let transactions = [
+            { id: 1, name: 'Sleep (Recovery)', hours: 8, category: 'rest' },
+            { id: 2, name: 'Making Biology Notes', hours: 1.5, category: 'education' },
+            { id: 3, name: 'Reading Literature Chapter', hours: 1, category: 'education' }
+        ];
+
+        // Selectors
+        const form = document.getElementById('transaction-form');
+        const historyContainer = document.getElementById('transaction-history');
+        const portfolioContainer = document.getElementById('portfolio-list');
+        const progressBarContainer = document.getElementById('progress-bar-container');
+        const catSelect = document.getElementById('activity-category');
+        const mainBalance = document.getElementById('main-balance');
+        const balanceIconContainer = document.getElementById('balance-icon-container');
+        const overdrawAlert = document.getElementById('overdraw-alert');
+        const overdrawText = document.getElementById('overdraw-text');
+        const entryCountLabel = document.getElementById('entry-count');
+
+        // Init: Populate category select
+        Object.entries(CATEGORIES).forEach(([id, data]) => {
+            const option = document.createElement('option');
+            option.value = id;
+            option.textContent = data.label;
+            catSelect.appendChild(option);
+        });
+
+        function render() {
+            // 1. Calculate Totals
+            const totalSpent = transactions.reduce((acc, curr) => acc + curr.hours, 0);
+            const balance = 24 - totalSpent;
+            const isOverdrawn = balance < 0;
+
+            // 2. Update Header Balance
+            mainBalance.textContent = `${balance.toFixed(1)} `;
+            const span = document.createElement('span');
+            span.className = 'text-sm font-medium';
+            span.textContent = 'Hours';
+            mainBalance.appendChild(span);
+
+            if (isOverdrawn) {
+                mainBalance.classList.add('text-red-600');
+                balanceIconContainer.classList.replace('bg-green-100', 'bg-red-100');
+                balanceIconContainer.classList.replace('text-green-600', 'text-red-600');
+                overdrawAlert.classList.remove('hidden');
+                overdrawText.textContent = `You are attempting to spend ${Math.abs(balance).toFixed(1)} hours you don't have.`;
+            } else {
+                mainBalance.classList.remove('text-red-600');
+                balanceIconContainer.classList.replace('bg-red-100', 'bg-green-100');
+                balanceIconContainer.classList.replace('text-red-600', 'text-green-600');
+                overdrawAlert.classList.add('hidden');
+            }
+
+            // 3. Update History List
+            historyContainer.innerHTML = '';
+            entryCountLabel.textContent = `${transactions.length} ${transactions.length === 1 ? 'ENTRY' : 'ENTRIES'}`;
+
+            if (transactions.length === 0) {
+                historyContainer.innerHTML = `
+                    <div class="p-12 text-center">
+                        <div class="w-16 h-16 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <i data-lucide="clock" class="text-slate-300 w-8 h-8"></i>
+                        </div>
+                        <p class="text-slate-400 font-medium">No transactions yet today.</p>
+                    </div>`;
+            } else {
+                // Reverse transactions to show newest first
+                [...transactions].reverse().forEach(t => {
+                    const cat = CATEGORIES[t.category];
+                    const div = document.createElement('div');
+                    div.className = "p-4 hover:bg-slate-50 transition-colors group flex items-center gap-4";
+                    div.innerHTML = `
+                        <div class="w-12 h-12 rounded-2xl ${cat.color} bg-opacity-10 ${cat.text} flex items-center justify-center shrink-0">
+                            <i data-lucide="${cat.icon}" class="w-6 h-6"></i>
+                        </div>
+                        <div class="flex-grow">
+                            <p class="font-bold text-slate-800 leading-tight">${t.name}</p>
+                            <p class="text-[10px] text-slate-400 font-black uppercase tracking-widest">${cat.label}</p>
+                        </div>
+                        <div class="text-right flex items-center gap-4">
+                            <p class="text-lg font-black text-slate-700">-${t.hours}<span class="text-xs ml-0.5">h</span></p>
+                            <button onclick="removeTransaction(${t.id})" class="p-2 text-slate-300 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-all">
+                                <i data-lucide="trash-2" class="w-5 h-5"></i>
+                            </button>
+                        </div>
+                    `;
+                    historyContainer.appendChild(div);
+                });
+            }
+
+            // 4. Update Portfolio Analysis
+            portfolioContainer.innerHTML = '';
+            Object.keys(CATEGORIES).forEach(catId => {
+                const catTotal = transactions.filter(t => t.category === catId).reduce((acc, curr) => acc + curr.hours, 0);
+                if (catTotal === 0) return;
+
+                const cat = CATEGORIES[catId];
+                const percentage = (catTotal / 24) * 100;
+                const div = document.createElement('div');
+                div.innerHTML = `
+                    <div class="flex justify-between text-[10px] font-black uppercase tracking-wider mb-1">
+                        <span class="text-slate-500">${cat.label}</span>
+                        <span class="${cat.text}">${catTotal}h</span>
+                    </div>
+                    <div class="w-full bg-slate-100 h-2 rounded-full overflow-hidden">
+                        <div class="${cat.color} h-full transition-all duration-500" style="width: ${Math.min(percentage, 100)}%"></div>
+                    </div>
+                `;
+                portfolioContainer.appendChild(div);
+            });
+
+            // 5. Update Progress Bar Footer
+            progressBarContainer.innerHTML = '';
+            transactions.forEach(t => {
+                const cat = CATEGORIES[t.category];
+                const segment = document.createElement('div');
+                segment.className = `${cat.color} h-full border-r border-white border-opacity-20 last:border-0 transition-all duration-700`;
+                segment.style.width = `${(t.hours / 24) * 100}%`;
+                segment.title = `${t.name}: ${t.hours}h`;
+                progressBarContainer.appendChild(segment);
+            });
+
+            // 6. Refresh Icons
+            lucide.createIcons();
+        }
+
+        // Action: Add
+        form.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const nameEl = document.getElementById('activity-name');
+            const hoursEl = document.getElementById('activity-hours');
+            const catEl = document.getElementById('activity-category');
+
+            const newEntry = {
+                id: Date.now(),
+                name: nameEl.value,
+                hours: parseFloat(hoursEl.value),
+                category: catEl.value
+            };
+
+            transactions.push(newEntry);
+            nameEl.value = '';
+            hoursEl.value = '';
+            render();
+        });
+
+        // Action: Remove
+        window.removeTransaction = function(id) {
+            transactions = transactions.filter(t => t.id !== id);
+            render();
+        };
+
+        // Initial Render
+        render();
+    </script>
+</body>
+</html>
