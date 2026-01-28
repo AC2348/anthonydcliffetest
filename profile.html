@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dr. Anthony David Cliffe - Author Profile</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Lucide Icons CDN -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+        body { font-family: 'Inter', sans-serif; }
+        
+        .bar-transition {
+            transition: height 1s ease-out, background-color 0.3s ease;
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-900 min-h-screen p-4 md:p-8">
+
+    <div class="max-w-5xl mx-auto space-y-6">
+        
+        <!-- Header Section -->
+        <header class="bg-white rounded-3xl p-8 shadow-sm border border-slate-200 flex flex-col md:flex-row items-center md:items-start gap-6 relative overflow-hidden">
+            <div class="absolute top-0 right-0 w-32 h-32 bg-blue-50 rounded-full -mr-16 -mt-16 z-0"></div>
+            <div class="w-24 h-24 bg-blue-600 rounded-2xl flex items-center justify-center text-white shrink-0 z-10 shadow-lg shadow-blue-200">
+                <i data-lucide="user" class="w-12 h-12"></i>
+            </div>
+            <div class="text-center md:text-left z-10">
+                <h1 class="text-3xl md:text-4xl font-bold text-slate-800 tracking-tight" id="author-name">Dr. Anthony David Cliffe</h1>
+                <p class="text-blue-600 font-medium text-lg mt-1" id="author-title">Senior Academic Skills Advisor and Project Developer</p>
+                <div class="flex items-center justify-center md:justify-start gap-2 mt-2 text-slate-500">
+                    <i data-lucide="graduation-cap" class="w-4 h-4"></i>
+                    <span id="author-institution">University of Chester</span>
+                </div>
+                
+                <div class="flex flex-wrap gap-2 mt-4 justify-center md:justify-start" id="interests-tags">
+                    <!-- Tags will be injected here -->
+                </div>
+            </div>
+        </header>
+
+        <!-- Metrics Grid -->
+        <section class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
+            <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200 flex flex-col items-center text-center hover:scale-[1.02] transition-transform duration-300">
+                <div class="p-3 bg-blue-50 rounded-xl mb-3 text-blue-500"><i data-lucide="quote"></i></div>
+                <div class="text-2xl font-bold text-slate-800">261</div>
+                <div class="text-sm font-semibold text-slate-500 uppercase tracking-tight mt-1">Total Citations</div>
+                <div class="text-xs text-slate-400 mt-2">+220 since 2020</div>
+            </div>
+            <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200 flex flex-col items-center text-center hover:scale-[1.02] transition-transform duration-300">
+                <div class="p-3 bg-emerald-50 rounded-xl mb-3 text-emerald-500"><i data-lucide="award"></i></div>
+                <div class="text-2xl font-bold text-slate-800">5</div>
+                <div class="text-sm font-semibold text-slate-500 uppercase tracking-tight mt-1">h-index</div>
+                <div class="text-xs text-slate-400 mt-2">Overall impact</div>
+            </div>
+            <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200 flex flex-col items-center text-center hover:scale-[1.02] transition-transform duration-300">
+                <div class="p-3 bg-purple-50 rounded-xl mb-3 text-purple-500"><i data-lucide="trending-up"></i></div>
+                <div class="text-2xl font-bold text-slate-800">4</div>
+                <div class="text-sm font-semibold text-slate-500 uppercase tracking-tight mt-1">i10-index</div>
+                <div class="text-xs text-slate-400 mt-2">Recent focus</div>
+            </div>
+            <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200 flex flex-col items-center text-center hover:scale-[1.02] transition-transform duration-300">
+                <div class="p-3 bg-orange-50 rounded-xl mb-3 text-orange-500"><i data-lucide="book-open"></i></div>
+                <div class="text-2xl font-bold text-slate-800">4</div>
+                <div class="text-sm font-semibold text-slate-500 uppercase tracking-tight mt-1">Key Research</div>
+                <div class="text-xs text-slate-400 mt-2">Featured Articles</div>
+            </div>
+        </section>
+
+        <!-- Main Content Area -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            
+            <!-- Citation Chart -->
+            <div class="lg:col-span-2 bg-white rounded-3xl p-8 shadow-sm border border-slate-200">
+                <div class="flex items-center justify-between mb-8">
+                    <h2 class="text-xl font-bold flex items-center gap-2">
+                        <i data-lucide="trending-up" class="text-blue-600"></i>
+                        Citation Trajectory
+                    </h2>
+                    <div class="text-xs font-semibold text-slate-400 uppercase tracking-widest">Growth per year</div>
+                </div>
+                
+                <div class="h-64 flex items-end justify-between gap-2 md:gap-4 px-2" id="chart-container">
+                    <!-- Bars will be injected here via JS -->
+                </div>
+                
+                <div class="mt-8 pt-6 border-t border-slate-100 flex items-center gap-4">
+                    <p class="text-sm text-slate-500 italic">
+                        Note: Citation growth shows a significant upward trend since 2020, peaking at 52 in 2024.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Research Focus / Expertise -->
+            <div class="bg-slate-900 rounded-3xl p-8 text-white shadow-xl shadow-slate-200">
+                <h2 class="text-xl font-bold mb-6 flex items-center gap-2">
+                    <i data-lucide="map" class="text-blue-400"></i>
+                    Impact Areas
+                </h2>
+                <div class="space-y-6">
+                    <div class="flex gap-4">
+                        <i data-lucide="map" class="text-blue-400 shrink-0 mt-1"></i>
+                        <div>
+                            <h4 class="font-semibold">Geoscience Education</h4>
+                            <p class="text-slate-400 text-sm leading-snug mt-1">Pioneering research in Virtual Field Guides (VFGs) and UAV integration.</p>
+                        </div>
+                    </div>
+                    <div class="flex gap-4">
+                        <i data-lucide="users" class="text-blue-400 shrink-0 mt-1"></i>
+                        <div>
+                            <h4 class="font-semibold">Students as Partners</h4>
+                            <p class="text-slate-400 text-sm leading-snug mt-1">Advancing radical collaboration in academic publishing and journals.</p>
+                        </div>
+                    </div>
+                    <div class="flex gap-4">
+                        <i data-lucide="wind" class="text-blue-400 shrink-0 mt-1"></i>
+                        <div>
+                            <h4 class="font-semibold">Sustainability</h4>
+                            <p class="text-slate-400 text-sm leading-snug mt-1">Exploring post-COVID sustainable futures and environmental attitudes.</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="mt-10 p-4 bg-white/10 rounded-2xl border border-white/10">
+                    <p class="text-xs text-blue-200 leading-relaxed font-medium">
+                        Dr. Cliffe's work bridges technical innovation (UAVs/VR) with social pedagogical movements (Students as Partners).
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Top Publications List -->
+        <section class="bg-white rounded-3xl p-8 shadow-sm border border-slate-200">
+            <div class="flex items-center justify-between mb-8">
+                <h2 class="text-xl font-bold flex items-center gap-2">
+                    <i data-lucide="book-open" class="text-blue-600"></i>
+                    Top Cited Works
+                </h2>
+                <a href="https://scholar.google.com/citations?user=kAm55NIAAAAJ" target="_blank" class="text-sm font-semibold text-blue-600 flex items-center gap-1 hover:underline">
+                    View All <i data-lucide="external-link" class="w-3.5 h-3.5"></i>
+                </a>
+            </div>
+            
+            <div class="space-y-4" id="publications-list">
+                <!-- List items will be injected here via JS -->
+            </div>
+        </section>
+
+        <footer class="text-center text-slate-400 text-sm pb-8">
+            Data compiled from Google Scholar Citations • Profile: kAm55NIAAAAJ
+        </footer>
+    </div>
+
+    <script>
+        // Data definition
+        const authorData = {
+            interests: ["UAV/RPAS", "Virtual Field Work", "Virtual Field Guides", "Sustainability"],
+            citationHistory: [
+                { year: 2018, count: 16 },
+                { year: 2019, count: 15 },
+                { year: 2020, count: 34 },
+                { year: 2021, count: 35 },
+                { year: 2022, count: 33 },
+                { year: 2023, count: 43 },
+                { year: 2024, count: 52 },
+                { year: 2025, count: 23 }
+            ],
+            topPublications: [
+                {
+                    title: "A review of the benefits and drawbacks to virtual field guides in today's Geoscience higher education environment",
+                    citations: 130,
+                    year: 2017,
+                    journal: "International Journal of Educational Technology in Higher Education"
+                },
+                {
+                    title: "Launching a journal about and through students as partners",
+                    citations: 48,
+                    year: 2017,
+                    journal: "International journal for Students as Partners"
+                },
+                {
+                    title: "Evaluating the introduction of unmanned aerial vehicles for teaching and learning in geoscience fieldwork education",
+                    citations: 33,
+                    year: 2019,
+                    journal: "Journal of Geography in Higher Education"
+                },
+                {
+                    title: "Engaging in radical work: Students as partners in academic publishing",
+                    citations: 18,
+                    year: 2018,
+                    journal: "Efficiency Exchange"
+                }
+            ]
+        };
+
+        // Initialize App
+        window.onload = () => {
+            renderTags();
+            renderChart();
+            renderPublications();
+            // Initialize Lucide icons
+            lucide.createIcons();
+        };
+
+        function renderTags() {
+            const container = document.getElementById('interests-tags');
+            authorData.interests.forEach(interest => {
+                const span = document.createElement('span');
+                span.className = "px-3 py-1 bg-slate-100 text-slate-600 text-sm rounded-full border border-slate-200 hover:bg-white hover:shadow-sm transition-all cursor-default";
+                span.innerText = interest;
+                container.appendChild(span);
+            });
+        }
+
+        function renderChart() {
+            const container = document.getElementById('chart-container');
+            const maxVal = Math.max(...authorData.citationHistory.map(d => d.count));
+
+            authorData.citationHistory.forEach(data => {
+                const heightPercent = (data.count / maxVal) * 100;
+                
+                const barWrapper = document.createElement('div');
+                barWrapper.className = "flex-1 flex flex-col items-center group relative h-full justify-end";
+                
+                barWrapper.innerHTML = `
+                    <div class="absolute inset-0 bg-slate-50/50 rounded-t-lg -z-0 mb-8"></div>
+                    <div class="w-full bg-blue-500 hover:bg-blue-600 rounded-t-lg bar-transition relative z-10" style="height: 0%">
+                        <div class="absolute -top-8 left-1/2 -translate-x-1/2 bg-slate-800 text-white text-[10px] font-bold py-1 px-2 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-20">
+                            ${data.count} citations
+                        </div>
+                    </div>
+                    <span class="text-[10px] font-bold text-slate-500 mt-3 rotate-45 md:rotate-0 h-8 flex items-center">
+                        ${data.year}
+                    </span>
+                `;
+                
+                container.appendChild(barWrapper);
+
+                // Animate bars after a short delay
+                setTimeout(() => {
+                    barWrapper.querySelector('.bar-transition').style.height = heightPercent + '%';
+                }, 100);
+            });
+        }
+
+        function renderPublications() {
+            const container = document.getElementById('publications-list');
+            authorData.topPublications.forEach(pub => {
+                const item = document.createElement('div');
+                item.className = "group p-4 hover:bg-slate-50 rounded-2xl transition-colors border border-transparent hover:border-slate-100 flex items-start gap-4";
+                
+                item.innerHTML = `
+                    <div class="w-12 h-12 rounded-xl bg-slate-100 flex items-center justify-center shrink-0 text-slate-400 font-bold group-hover:bg-blue-100 group-hover:text-blue-600 transition-colors">
+                        ${pub.citations}
+                    </div>
+                    <div class="flex-1">
+                        <h3 class="font-semibold text-slate-800 leading-snug group-hover:text-blue-700">${pub.title}</h3>
+                        <div class="flex flex-wrap items-center gap-y-1 gap-x-4 mt-1 text-sm text-slate-500">
+                            <span class="flex items-center gap-1"><i data-lucide="calendar" class="w-3.5 h-3.5"></i> ${pub.year}</span>
+                            <span class="flex items-center gap-1"><i data-lucide="book-open" class="w-3.5 h-3.5"></i> ${pub.journal}</span>
+                        </div>
+                    </div>
+                    <i data-lucide="chevron-right" class="text-slate-300 shrink-0 mt-2 w-4 h-4"></i>
+                `;
+                
+                container.appendChild(item);
+            });
+        }
+    </script>
+</body>
+</html>
